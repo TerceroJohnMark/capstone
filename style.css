@@ -1,0 +1,146 @@
+/* ==========================================
+   CampusReport - Minimalist Aesthetic Theme
+   ================================---------- */
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  --transition: all 0.2s ease-in-out;
+}
+
+/* Base Body Adjustments */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Modal Animations & Transitions */
+#studentModal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  backdrop-filter: blur(4px);
+  background-color: rgba(15, 23, 42, 0.4);
+}
+
+#studentModal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#studentModal > div {
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#studentModal.show > div {
+  transform: scale(1);
+}
+
+/* Login Card Minimalist Shadow */
+.login-card {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+}
+
+/* Table Row Hover Effect */
+tbody tr {
+  transition: var(--transition);
+}
+tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Status & Priority Badge Styling */
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: capitalize;
+}
+
+/* Status variants */
+.status.pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+.status.in-progress {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+.status.resolved {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+/* Priority variations embedded directly in custom tags if needed */
+.priority-urgent {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+.priority-high {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+/* Action Buttons */
+button.action {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+button.action.edit {
+  color: var(--primary);
+  background-color: #eef2ff;
+}
+button.action.edit:hover {
+  background-color: #e0e7ff;
+}
+
+button.action.delete {
+  color: #ef4444;
+  background-color: #fef2f2;
+}
+button.action.delete:hover {
+  background-color: #fee2e2;
+}
+
+/* Utilities */
+.hidden {
+  display: none !important;
+}

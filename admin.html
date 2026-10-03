@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - Campus Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- EmailJS SDK & Initialization -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+     (function(){
+        emailjs.init({
+          publicKey: "IQ3Tef4wsbX4IdcVe",
+        });
+     })();
+  </script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+<nav class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow relative">
+  <div class="font-bold text-lg">CampusReport - Admin Dashboard</div>
+  <div class="flex items-center space-x-4">
+    <!-- Notification Bell Dropdown Container -->
+    <div class="relative">
+      <button id="notifBtn" class="relative bg-slate-800 hover:bg-slate-700 p-2 rounded-lg text-slate-300 hover:text-white transition flex items-center justify-center">
+        🔔
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+      
+      <!-- Notification Dropdown Tray -->
+      <div id="notifDropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 hidden z-50 text-slate-800 overflow-hidden">
+        <div class="p-3 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Notifications</span>
+          <button id="markAllReadBtn" class="text-[11px] text-blue-600 hover:underline font-medium">Mark all read</button>
+        </div>
+        <div id="notifList" class="max-h-72 overflow-y-auto divide-y divide-slate-100 text-xs">
+          <div class="p-4 text-center text-slate-400">No notifications yet</div>
+        </div>
+      </div>
+    </div>
+
+    <span id="adminEmail" class="text-sm text-slate-300"></span>
+    <button id="logoutBtn" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">Logout</button>
+  </div>
+</nav>
+<main class="max-w-7xl mx-auto p-6 space-y-6">
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <p class="text-xs text-slate-500 font-medium uppercase">Total Complaints</p>
+      <p id="statTotal" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <p class="text-xs text-amber-600 font-medium uppercase">Pending</p>
+      <p id="statPending" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <p class="text-xs text-blue-600 font-medium uppercase">In Progress</p>
+      <p id="statInProg" class="text-2xl font-bold text-blue-600 mt-1">0</p>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <p class="text-xs text-green-600 font-medium uppercase">Resolved</p>
+      <p id="statResolved" class="text-2xl font-bold text-green-600 mt-1">0</p>
+    </div>
+  </div>
+  <!-- Filters & Time Analysis Bar -->
+  <div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex flex-wrap gap-3 items-center justify-between">
+    <div class="flex flex-wrap gap-3 items-center flex-1">
+      <input type="text" id="searchInput" placeholder="Search keywords..." class="px-3 py-2 border rounded-lg text-sm w-48 outline-none focus:ring-2 focus:ring-blue-500">
+      
+      <!-- Department Filter -->
+      <select id="deptFilter" class="px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="all">All Departments</option>
+        <option value="CICS (IT/CS)">CICS (IT/CS)</option>
+        <option value="CBAA (Business)">CBAA (Business)</option>
+        <option value="CEA (Engineering)">CEA (Engineering)</option>
+        <option value="CTE (Education)">CTE (Education)</option>
+        <option value="CAS (Arts & Sciences)">CAS (Arts & Sciences)</option>
+        <option value="Other">Other</option>
+      </select>
+      <!-- User Type Filter -->
+      <select id="userTypeFilter" class="px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="all">Students & Teachers</option>
+        <option value="Student">Students Only</option>
+        <option value="Teacher">Teachers Only</option>
+      </select>
+      <!-- Status Filter -->
+      <select id="statusFilter" class="px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="all">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+      <!-- Time Filter -->
+      <select id="timeFilter" class="px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-blue-50 text-blue-700 font-medium">
+        <option value="all">All Time Records</option>
+        <option value="today">Submitted Today</option>
+        <option value="week">Past 7 Days</option>
+        <option value="month">This Month</option>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button id="clearFilters" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg">Reset</button>
+      <button id="exportCsvBtn" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg">Export CSV</button>
+    </div>
+  </div>
+  <!-- Data Table -->
+  <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-slate-100 text-slate-700 text-xs uppercase font-semibold">
+        <tr>
+          <th class="p-4">Report Details</th>
+          <th class="p-4">Sender / Dept</th>
+          <th class="p-4">Category / Priority</th>
+          <th class="p-4">Date & Time</th>
+          <th class="p-4">Status</th>
+          <th class="p-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="adminTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+        <!-- Dynamically populated -->
+      </tbody>
+    </table>
+  </div>
+</main>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
